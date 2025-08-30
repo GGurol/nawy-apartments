@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Apartment" ALTER COLUMN "project" DROP DEFAULT,
+ALTER COLUMN "unitName" DROP DEFAULT,
+ALTER COLUMN "unitNumber" DROP DEFAULT;

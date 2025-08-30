@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: nawy_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: nawy
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nawy_backend
+    environment:
+      # Prisma expects DATABASE_URL to include schema=public
+      DATABASE_URL: postgresql://postgres:admin@db:5432/nawy?schema=public
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    command: sh -c "npx prisma migrate deploy && (node dist/prisma/seed.js || echo 'seed skipped') && node dist/src/index.js"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nawy_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000/api
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
