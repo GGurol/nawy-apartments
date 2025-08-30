@@ -3,7 +3,7 @@ Stack
 
 Frontend: Next.js 14 (App Router), TypeScript, Tailwind CSS
 
-Backend: Node.js + Express + TypeScript + Prisma ORM
+Backend: Node.js + Express + TypeScript + Prisma (PostgreSQL)
 
 Database: PostgreSQL
 
@@ -78,26 +78,21 @@ Install (no Docker)
 cd backend && npm install
 cd ../frontend && npm install
 
-Run locally (no Docker)
+Run Locally (no Docker)
+Backend
 
 Start Postgres yourself and ensure DATABASE_URL points to it.
-
-Backend:
 
 cd backend
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
 
-
-Frontend:
-
+Frontend
 cd frontend
 npm run dev
 
-
-Seed (after building TypeScript):
-
+Seed (after building TypeScript)
 cd backend
 npm run build
 node dist/prisma/seed.js
@@ -115,13 +110,13 @@ Backend: http://localhost:4000
 
 Postgres: localhost:5433 (maps to container db:5432)
 
-What Compose does
+What Compose Does
 
 Starts Postgres (db) with healthcheck (published on host port 5433).
 
-Builds and starts backend, runs npx prisma migrate deploy on startup, then starts the server (entry: dist/src/index.js).
+Builds & starts backend, runs npx prisma migrate deploy on startup, then starts the server (entry: dist/src/index.js).
 
-Builds and starts frontend.
+Builds & starts frontend.
 
 Seed in Docker (no package.json change required)
 docker compose run --rm backend node dist/prisma/seed.js
@@ -130,15 +125,23 @@ API Endpoints
 
 GET /api/apartments?search=&page=&limit=
 
+search (optional): case-insensitive match on unitName, unitNumber, project
+
+page (default: 1)
+
+limit (default: 10, max: 100)
+
 GET /api/apartments/:id
 
 POST /api/apartments
 
 Troubleshooting
-
 Backend container exits immediately
 
-Check logs: docker compose logs --tail=200 backend
+Check logs:
+
+docker compose logs --tail=200 backend
+
 
 If you see Cannot find module '/app/dist/index.js', use the correct path: dist/src/index.js.
 
@@ -154,24 +157,20 @@ For Compose, change it inside the container:
 
 docker compose exec -u postgres db psql -d postgres -c "ALTER USER postgres WITH PASSWORD '<PASSWORD>';"
 
-
 Prisma CLI not found at runtime
 
 Your image must include prisma at runtime or you must run migrations in a separate job.
 
-Current Dockerfile/compose run npx prisma migrate deploy on start; ensure prisma is installed in the image (dependencies) and prisma/ is copied.
+Current Dockerfile/compose runs npx prisma migrate deploy on start; ensure prisma is installed in the image (dependencies) and prisma/ is copied.
 
-Frontend can’t reach backend when using Compose
+Frontend can’t reach backend in Compose
 
-Use NEXT_PUBLIC_API_URL=http://localhost:4000/api in the browser. http://backend:4000 works only inside Docker network, not in the browser.
+Use NEXT_PUBLIC_API_URL=http://localhost:4000/api in the browser.
+http://backend:4000 works only inside the Docker network, not in the browser.
 
 Port conflicts
-
-EADDRINUSE :3000 or :4000:
-
 lsof -ti :3000 | xargs -r kill -9
 lsof -ti :4000 | xargs -r kill -9
-
 
 Reset database volume
 
