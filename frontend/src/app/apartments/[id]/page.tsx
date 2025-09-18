@@ -1,21 +1,29 @@
 import apartmentService from "@/services/apartmentService";
 import { Apartment } from "@/types/apartment";
+// FC import'una artık gerek yok
+// import { FC } from 'react';
+
+// Props tipi tanımı doğru, bu kalacak
+interface ApartmentPageProps {
+  params: {
+    id: string;
+  };
+}
+
 
 async function getApartmentById(id: string): Promise<Apartment | null> {
   try {
     return await apartmentService.getById(id);
   } catch (error) {
-    console.warn("API not available, using mock data:", error);
+    console.warn("API call failed, could not fetch apartment:", error);
     return null;
   }
 }
 
-export default async function ApartmentPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } =  params;
+// CORRECTED: Removed the `: FC<ApartmentPageProps>` annotation
+// and typed `params` directly in the function signature.
+  const ApartmentPage = async ({ params }: { params: { id: string } }) => {
+  const { id } = params;
   const apartment = await getApartmentById(id);
 
   if (!apartment) {
@@ -25,14 +33,14 @@ export default async function ApartmentPage({
           Apartment Not Found
         </h1>
         <p className='text-gray-600 mt-2'>
-          The apartment you're looking for doesn't exist.
+          The apartment you're looking for doesn't exist or the API is unavailable.
         </p>
       </div>
     );
   }
 
   return (
-    <main className='max-w-4xl mx-auto space-y-8'>
+    <main className='max-w-4xl mx-auto space-y-8 p-4'>
       <div className='bg-white rounded-2xl shadow-lg overflow-hidden'>
         {apartment.imageUrl ? (
           <img
@@ -84,4 +92,6 @@ export default async function ApartmentPage({
       </div>
     </main>
   );
-}
+};
+
+export default ApartmentPage;

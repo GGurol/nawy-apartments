@@ -1,0 +1,59 @@
+.
+├── backend
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── prisma
+│   │   ├── migrations
+│   │   │   ├── 20250829144906_init
+│   │   │   │   └── migration.sql
+│   │   │   ├── 20250829152719_init
+│   │   │   │   └── migration.sql
+│   │   │   ├── 20250829152822_initial_schema
+│   │   │   │   └── migration.sql
+│   │   │   └── migration_lock.toml
+│   │   ├── schema.prisma
+│   │   ├── seed.js
+│   │   ├── seed.js.map
+│   │   └── seed.ts
+│   ├── README.md
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── lib
+│   │   │   ├── prisma.ts
+│   │   │   └── validate.ts
+│   │   ├── middlewares
+│   │   │   └── error.ts
+│   │   ├── routes
+│   │   │   └── apartments.ts
+│   │   └── schemas
+│   │       └── apartment.ts
+│   └── tsconfig.json
+├── docker-compose.yml
+├── frontend
+│   ├── Dockerfile
+│   ├── next-env.d.ts
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.js
+│   ├── README.md
+│   ├── src
+│   │   ├── app
+│   │   │   ├── apartments
+│   │   │   │   └── [id]
+│   │   │   │       └── page.tsx
+│   │   │   ├── globals.css
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── services
+│   │   │   ├── apartmentService.ts
+│   │   │   └── apiService.ts
+│   │   └── types
+│   │       └── apartment.ts
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+├── package-lock.json
+├── README.md
+└── tree.txt
+
+19 directories, 38 files
